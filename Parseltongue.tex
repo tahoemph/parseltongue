@@ -1,0 +1,346 @@
+\documentclass[]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={Parseltongue},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\title{Parseltongue}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+So you wanna speak Parseltongue?
+
+\hyperref[h.3ansocxiwo9]{Introduction}
+
+\hyperref[h.jodnkjx9tm7b]{History}
+
+\hyperref[h.kq87nccmuibo]{Categorization}
+
+\hyperref[h.ntzqrf5bvmsx]{Stylistic structure}
+
+\hyperref[h.jpv29t9aa3a8]{Interesting Features}
+
+\hyperref[h.vtsupzq2n90q]{List Comprehensions}
+
+\hyperref[h.vxmuxbhdgycd]{Generators}
+
+\hyperref[h.nehfezpoa7wr]{Object Oriented Features}
+
+\hyperref[h.ny9fqpb2kkvw]{Functional Features}
+
+\hyperref[h.id8nhs8wk8ip]{Meta Programming}
+
+\hyperref[h.55mc19riilwj]{Performance considerations}
+
+\hyperref[h.19qm3vpgquvi]{Test Frameworks}
+
+\hyperref[h.o5znyaqol7cr]{Logging}
+
+\hyperref[h.honc2v4c1vj6]{GIL}
+
+\hyperref[h.jn7qh7kh8apj]{Other Resources}
+
+\section{Introduction}
+
+We all learned a first real language. ~For me I started with BASIC on a
+Vic 20 in 1981 or so. ~Later Forth and 6502. ~But the first real
+language was c. ~It still is the mother tongue. ~It is the best for
+highly performant software and is contains the most reused libraries.
+~But for many tasks there are languages that are better suited from a
+software engineering standpoint. ~In this document I'll describe steps
+you can take to learn to write in Python without too much of an accent.
+~By learning how to write Python in a relatively native manner you make
+it easier for others to read your code, make it more likely you will use
+constructs that perform well, and will make it easier on yourself when
+you need to read others code.
+
+This document will assume you have read a basic tutorial but are now
+trying to fit the pieces together.
+
+\section{History}
+
+Python was conceived and originally developed by Guido Van Rossum as a
+replacement for the teaching language ABC starting in the late 80s.
+~From the standpoint of writing modern Python the interesting part of
+the history begins in 2008 when Python 3 is released. ~Since then the
+Python 2.x line is capped at 2.7. ~Until fairly recently most of the
+major Python libraries have not been available in Python 3.
+
+Python is managed by the Python Foundation. ~There are a series of
+proposals for extending the language and the libraries called PEPs.
+
+\section{Categorization}
+
+Python is a multi-paradigm language. ~Its basic control flow structures
+are like those of other Algol based languages. ~Its module and object
+oriented structures are adapted from modula. ~And it has many functional
+features taken from haskell and other languages.
+
+\section{Stylistic structure}
+
+Guido set the pace for stylistic structure fairly early. ~PEP 8 lays out
+what good source should look like. ~Unlike many early languages this is
+fairly well followed. ~Some parts of the standard library were developed
+in various styles, but in general the PEP 8 style pervades the
+community.
+
+There is a general zen of python that you can read by typing ``import
+this'' at a python REPL prompt. ~Fundamentally it encourages you to
+stick to things that are easy to read and simple to comprehend.
+
+\section{Interesting Features}
+
+\subsection{List Comprehensions}
+
+This is a concept taken from functional languages. ~As noted later one
+of the best way to get good performance from python is to spend as much
+time in code written in c as possible. ~So when building a data
+structure expressing that in a comprehension will produce the best
+performance by far.
+
+So don't do:
+
+values = {[}{]}
+
+for i in range(10):
+
+~~~~~~~~values.append(i**2)
+
+Instead do:
+
+values = {[}i**2 for i in range(10){]}
+
+\subsection{Generators}
+
+Initially generators just look like a cute way to hide iteration over a
+data structure. ~But more fundamentally they provide a performant way to
+build pipelines of data. ~When I was first learning python I was
+building a ETL system for financial data. ~One (well, many) of the
+vendors regularly provided what should have been data in a CSV format
+but it contained an extra quotation mark if the last entry was a string.
+
+So something like:
+
+``company 1'', ``address'', ``05112014'', 500.0, ``barf''''
+
+It would have been easy to just fix this with a script that passed over
+the data generating a valid file but it sucks to start running over the
+data twice. ~So instead it is easy to build a generator to fix this
+problem. ~Like:
+
+def fix\_busted\_data(source):
+
+~~~~~~~~for line in source:
+
+~~~~~~~~~~~~~~~~yield line{[}:-1{]} ~\# simplification
+
+Now it was easy to do something like:
+
+with open(``sourcedata.csv'', ``r'') as f:
+
+~~~~~~~~for line in fix\_bused\_data(f):
+
+~~~~~~~~~~~~~~~~process\_line(line)
+
+You can build much deeper hierarchies of generators pulling data through
+a series of filters. ~Note that generators in the c version of python
+are on the stack of the caller and are much faster than a normal
+function call.
+
+David Beazley has presented on generators (and a related concept
+coroutines) a fair number of times including a recent python meetup in
+SF. ~His talks at
+\href{http://www.google.com/url?q=http\%3A\%2F\%2Fwww.dabeaz.com\%2Fgenerators\%2F\&sa=D\&sntz=1\&usg=AFQjCNHgQSwBOSX7OQcp3SSqls_7gn5JwQ}{http://www.dabeaz.com/generators/}~are
+worthwhile to work your way through.
+
+\subsection{Object Oriented Features}
+
+Python provides a normal set of OO features. ~The multiple inheritance
+features are simplified to some extent and in the code I usually see
+rarely used. ~Since python 2 the type system is unified such that even
+the builtin types act in a normal fashion.
+
+\subsection{Functional Features}
+
+Over time many functional features have been added to python. ~In
+addition to the list comprehensions above these include first class
+functions. ~You often see this feature used when metaprogramming with
+decorators.
+
+\subsection{Meta Programming}
+
+\section{Performance considerations}
+
+Stay off the grass. ~I mean the interpreter. ~If you can express
+something in a way that
+
+\section{Test Frameworks}
+
+\section{Logging}
+
+\section{GIL}
+
+GIL stands for ``Global Interpreter Lock''. ~When in the interpreter
+python takes a big lock. ~That makes it single threaded. ~This means
+that it is hard to achieve parallelism using core python features. ~So
+you achieve parallelism by starting up other processes.
+
+Concurrency on the other hand can be easily achieved in python.
+
+\section{Development Environments}
+
+Python is a scripting languages. ~A core piece of your development
+environment is the REPL. ~When you run across something you are
+uncertain about you should start here. ~Any good development environment
+will start here.
+
+There is a debugger in the core of Python. ~Two thing that are useful
+are the ability to embed breakpoints into code and the ability to run
+your code under the debugger from its initialization. ~These look like:
+
+if possible\_complex\_scenario(inputs):
+
+~~~~~~~~import pdb; pdb.set\_trace()
+
+When you hit this condition this will stop you at this point and drop
+you into the debugger.
+
+(env){[}mph@li575-52 nesoi{]}\$ python -m pdb nesoi.py ~ ~ ~ ~ ~ ~ ~ ~ ~
+~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+\textgreater{}
+/opt/nesoi-work/nesoi/nesoi.py(1)\textless{}module\textgreater{}()
+
+-\textgreater{} import argparse
+
+(Pdb) b 76
+
+Breakpoint 1 at /opt/nesoi-work/nesoi/nesoi.py:76
+
+(Pdb) b report
+
+Breakpoint 2 at /opt/nesoi-work/nesoi/nesoi.py:151
+
+(Pdb) c
+
+Traceback (most recent call last):
+
+~ File ``/usr/local/lib/python2.7/pdb.py'', line 1314, in main
+
+~ ~ pdb.\_runscript(mainpyfile)
+
+~ File ``/usr/local/lib/python2.7/pdb.py'', line 1233, in \_runscript
+
+~ ~ self.run(statement)
+
+~ File ``/usr/local/lib/python2.7/bdb.py'', line 400, in run
+
+~ ~ exec cmd in globals, locals
+
+~ File ``\textless{}string\textgreater{}'', line 1, in
+\textless{}module\textgreater{}
+
+~ File ``nesoi.py'', line 13, in \textless{}module\textgreater{}
+
+~ ~ something\_that\_fails
+
+NameError: name `something\_that\_fails' is not defined
+
+Uncaught exception. Entering post mortem debugging
+
+Running `cont' or `step' will restart the program
+
+\textgreater{}
+/opt/nesoi-work/nesoi/nesoi.py(13)\textless{}module\textgreater{}()
+
+-\textgreater{} something\_that\_fails
+
+(Pdb) c
+
+Post mortem debugger finished. The nesoi.py will be restarted
+
+\textgreater{}
+/opt/nesoi-work/nesoi/nesoi.py(1)\textless{}module\textgreater{}()
+
+-\textgreater{} import argparse
+
+(Pdb)
+
+There are several things being demonstrated here. ~The first is how to
+start up a script with a module loaded and initialized. ~In this case it
+is the debugger package and you are stopped at the first line. ~Next you
+can set breakpoints. ~Last if you hit an exception you are stopped,
+given a stack trace, and able to look around before restarting. ~This
+provides for a powerful and tight debug loop.
+
+I use vim with a couple of extensions. ~Chief among these are
+scrooloose/syntastic and klen/python-mode. ~This, coupled with tmux,
+makes for a very good environment for programmers who work on the home
+row.
+
+I have used JetBrains PyCharm in the past. ~I think this is a pretty
+good environment if you are not home row oriented. ~I gave up on it a
+few years ago because of its mouse orientation getting in the way of
+writing code and its speed. ~I've heard its performance has been
+significantly enhanced since. ~There is a community and commercial
+version of this package so you can try out its basic functionality
+inexpensively.
+
+For doing interactive analysis people should look at IPython. ~This is
+an awesome environment built around applying code cells to data and
+producing visuals in a notebook style of development. ~This was built by
+a Physicist originally at CU Boulder and later at Berkeley. ~It has many
+features which fit together in a really holistic manner. ~Combined with
+numpy, scipy, and pandas this is the core for a nice python analysis
+environment.
+
+\section{Other Resources}
+
+The way you learn how to program in any language is to read source
+written by people who are good at it. ~For example nobody learns c well
+without reading unix kernel source. ~In the case of Python reading the
+standard library source is a good way to learn.
+
+\end{document}
