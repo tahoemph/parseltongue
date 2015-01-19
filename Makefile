@@ -1,5 +1,5 @@
 Parseltongue.pdf: Parseltongue.tex
-	pdflatex Parseltongue.tex
+	pdflatex -shell-escape Parseltongue.tex
 
 clean:
 	rm -f Parseltongue.aux Parseltongue.out Parseltongue.log

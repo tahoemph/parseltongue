@@ -1,4 +1,5 @@
 \documentclass[]{article}
+\usepackage{minted}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
@@ -141,15 +142,17 @@ performance by far.
 
 So don't do:
 
-values = {[}{]}
-
+\begin{minted} {python}
+values = []
 for i in range(10):
-
-~~~~~~~~values.append(i**2)
+    values.append(i**2)
+\end{minted}
 
 Instead do:
 
-values = {[}i**2 for i in range(10){]}
+\begin{minted} {python}
+values = [i**2 for i in range(10)]
+\end{minted}
 
 \subsection{Generators}
 
@@ -169,19 +172,19 @@ the data generating a valid file but it sucks to start running over the
 data twice. ~So instead it is easy to build a generator to fix this
 problem. ~Like:
 
-def fix\_busted\_data(source):
-
-~~~~~~~~for line in source:
-
-~~~~~~~~~~~~~~~~yield line{[}:-1{]} ~\# simplification
+\begin{minted} {python}
+def fix_busted_data(source):
+    for line in source:
+    yield line[:-1] # simplification
+\end{minted}
 
 Now it was easy to do something like:
 
+\begin{minted} {python}
 with open(``sourcedata.csv'', ``r'') as f:
-
-~~~~~~~~for line in fix\_bused\_data(f):
-
-~~~~~~~~~~~~~~~~process\_line(line)
+    for line in fix_bused_data(f):
+        process_line(line)
+\end{minted}
 
 You can build much deeper hierarchies of generators pulling data through
 a series of filters. ~Note that generators in the c version of python
@@ -239,74 +242,40 @@ There is a debugger in the core of Python. ~Two thing that are useful
 are the ability to embed breakpoints into code and the ability to run
 your code under the debugger from its initialization. ~These look like:
 
-if possible\_complex\_scenario(inputs):
-
-~~~~~~~~import pdb; pdb.set\_trace()
+\begin{minted}{python}
+if possible_complex_scenario(inputs):
+    import pdb; pdb.set_trace()
+\end{minted}
 
 When you hit this condition this will stop you at this point and drop
 you into the debugger.
 
-(env){[}mph@li575-52 nesoi{]}\$ python -m pdb nesoi.py ~ ~ ~ ~ ~ ~ ~ ~ ~
-~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-\textgreater{}
-/opt/nesoi-work/nesoi/nesoi.py(1)\textless{}module\textgreater{}()
-
--\textgreater{} import argparse
-
+\begin{minted}{bash}
+$ python -mpdb nesoi.py
+> /opt/nesoi-work/nesoi/nesoi.py(1)<module>()
+-> import argparse
 (Pdb) b 76
-
 Breakpoint 1 at /opt/nesoi-work/nesoi/nesoi.py:76
-
 (Pdb) b report
-
-Breakpoint 2 at /opt/nesoi-work/nesoi/nesoi.py:151
-
+Breakpoint 2 at /opt/nesoi-work/nesoi/nesoi.py:147
 (Pdb) c
-
 Traceback (most recent call last):
-
-~ File ``/usr/local/lib/python2.7/pdb.py'', line 1314, in main
-
-~ ~ pdb.\_runscript(mainpyfile)
-
-~ File ``/usr/local/lib/python2.7/pdb.py'', line 1233, in \_runscript
-
-~ ~ self.run(statement)
-
-~ File ``/usr/local/lib/python2.7/bdb.py'', line 400, in run
-
-~ ~ exec cmd in globals, locals
-
-~ File ``\textless{}string\textgreater{}'', line 1, in
-\textless{}module\textgreater{}
-
-~ File ``nesoi.py'', line 13, in \textless{}module\textgreater{}
-
-~ ~ something\_that\_fails
-
-NameError: name `something\_that\_fails' is not defined
-
+  File "/usr/local/lib/python2.7/pdb.py", line 1314, in main
+    pdb._runscript(mainpyfile)
+  File "/usr/local/lib/python2.7/pdb.py", line 1233, in _runscript
+    self.run(statement)
+  File "/usr/local/lib/python2.7/bdb.py", line 400, in run
+    exec cmd in globals, locals
+  File "<string>", line 1, in <module>
+  File "nesoi.py", line 11, in <module>
+    some_bug()
+NameError: name 'some_bug' is not defined
 Uncaught exception. Entering post mortem debugging
-
-Running `cont' or `step' will restart the program
-
-\textgreater{}
-/opt/nesoi-work/nesoi/nesoi.py(13)\textless{}module\textgreater{}()
-
--\textgreater{} something\_that\_fails
-
-(Pdb) c
-
-Post mortem debugger finished. The nesoi.py will be restarted
-
-\textgreater{}
-/opt/nesoi-work/nesoi/nesoi.py(1)\textless{}module\textgreater{}()
-
--\textgreater{} import argparse
-
-(Pdb)
+Running 'cont' or 'step' will restart the program
+> /opt/nesoi-work/nesoi/nesoi.py(11)<module>()
+-> some_bug()
+(Pdb) 
+\end{minted}
 
 There are several things being demonstrated here. ~The first is how to
 start up a script with a module loaded and initialized. ~In this case it
