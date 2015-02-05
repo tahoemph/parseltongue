@@ -55,10 +55,10 @@
 \section{Introduction}
 
 We all learned a first real language.  For me the first real
-language was c. It still is the mother tongue. It is the best for
+language was c. It still is the mother tongue. It is wonderful for
 highly performant software and contains the most reused libraries.
 But for many tasks there are languages that are better suited from a
-software engineering standpoint. In this document I'll describe steps
+software engineering standpoint. In this document I will describe steps
 you can take to learn to write in Python without too much of an accent.
 By learning how to write Python in a relatively native manner you make
 it easier for others to read your code, make it more likely you will use
@@ -89,11 +89,17 @@ features taken from haskell and other languages.
 
 \section{Stylistic structure}
 
-Guido set the pace for stylistic structure fairly early. PEP 8 lays out
-what good source should look like. Unlike many early languages this is
-fairly well followed. Some parts of the standard library were developed
+Guido set the pace for stylistic structure fairly early.
+\href{https://www.python.org/dev/peps/pep-0008/}{PEP 8}
+lays out
+what good source should look like. 
+Some parts of the standard library were developed
 in various styles, but in general the PEP 8 style pervades the
 community.
+
+In addition to laying out code structure guidelines PEP 8 also includes
+guidelines about how to use the language.  The section titled
+Programming Recommendations is well worth the (re)read.
 
 There is a general zen of python that you can read by typing ``import
 this'' at a python REPL prompt. Fundamentally it encourages you to
@@ -183,8 +189,8 @@ decorators.
 
 \subsection{Meta Programming}
 
-There are a lot of meta programming features in python.  You should get explore the
-the various objects in the repl.  Do a dir on a lot of things and then dig into what
+There are a lot of meta programming features in python.  You should explore the
+various objects in the repl.  Do a dir on a lot of things and then dig into what
 attributes are on those objects.  Realize that classes are objects.  Take a look at
 an object and how it is wired up to other objects in its class.  Consider:
 
@@ -219,9 +225,10 @@ the expression of solutions to common problems.
 \section{Performance considerations}
 
 Stay off the grass. I mean the interpreter. If you can express
-something in a way that spends most of its time in some c code
+something in a way that spends most of its time in c code
 it will perform better.  But as the Zen of Python encourages don't
-worry too much about this until you have measured performance is an issue.
+worry too much about this until you have measured that performance
+is an issue.
 
 \section{Test Frameworks}
 
