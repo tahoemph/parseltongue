@@ -54,10 +54,9 @@
 
 \section{Introduction}
 
-We all learned a first real language. For me I started with BASIC on a
-Vic 20 in 1981 or so. Later Forth and 6502. But the first real
+We all learned a first real language.  For me the first real
 language was c. It still is the mother tongue. It is the best for
-highly performant software and is contains the most reused libraries.
+highly performant software and contains the most reused libraries.
 But for many tasks there are languages that are better suited from a
 software engineering standpoint. In this document I'll describe steps
 you can take to learn to write in Python without too much of an accent.
@@ -131,7 +130,8 @@ data structure. But more fundamentally they provide a performant way to
 build pipelines of data. When I was first learning python I was
 building a ETL system for financial data. One (well, many) of the
 vendors regularly provided what should have been data in a CSV format
-but it contained an extra quotation mark if the last entry was a string.
+but it was broken in some fashion.  That is representd in this example by
+an extra quotation mark.
 
 So something like:
 
@@ -140,7 +140,7 @@ So something like:
 It would have been easy to just fix this with a script that passed over
 the data generating a valid file but it sucks to start running over the
 data twice. So instead it is easy to build a generator to fix this
-problem. Like:
+problem.
 
 \begin{minted} {python}
 def fix_busted_data(source):
@@ -172,7 +172,7 @@ worthwhile to work your way through.
 Python provides a normal set of OO features. The multiple inheritance
 features are simplified to some extent and in the code I usually see
 rarely used. Since python 2 the type system is unified such that even
-the builtin types act in a normal fashion.
+the builtin types act in a regular fashion.
 
 \subsection{Functional Features}
 
@@ -183,14 +183,58 @@ decorators.
 
 \subsection{Meta Programming}
 
+There are a lot of meta programming features in python.  You should get explore the
+the various objects in the repl.  Do a dir on a lot of things and then dig into what
+attributes are on those objects.  Realize that classes are objects.  Take a look at
+an object and how it is wired up to other objects in its class.  Consider:
+
+\begin{minted} {bash}
+>>> class Foo(object):
+...     pass
+...
+>>> x = Foo()
+>>> x.a = 5
+>>> dir(x)
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'a']
+>>> x.a
+5
+>>> y = Foo()
+>>> y.b = 6
+>>> dir(y)
+['__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'b']
+>>> x.__class__.c = 7
+>>> y.c
+7
+>>> x.c
+7
+>>>
+\end{minted}
+
+Normally you shouldn't be taking advantage of meta programming.  But understanding how things are wired
+together can help you debug difficult problems.
+
+Read about decorators and context managers.  What do they suggest as ways to simplify
+the expression of solutions to common problems.
+
 \section{Performance considerations}
 
 Stay off the grass. I mean the interpreter. If you can express
-something in a way that
+something in a way that spends most of its time in some c code
+it will perform better.  But as the Zen of Python encourages don't
+worry too much about this until you have measured performance is an issue.
 
 \section{Test Frameworks}
 
+There are many testing frameworks.  The testing framework unittest in Python 2 and
+the Michael Ford's mock library (standard in Python 3, but you will need to install
+it separately in Python 2) is a good way to build unit tests.
+
 \section{Logging}
+
+The logging framework has a lot of options.  Set it up once and then in each module
+of your source get a handle on the logger by calling 'logging.getLogger({\_\_}name{\_}{\_})'.  
+There is no reason to have a logger object on your stack or in an object.  You only
+need one per module.
 
 \section{GIL}
 
@@ -200,6 +244,8 @@ that it is hard to achieve parallelism using core python features. So
 you achieve parallelism by starting up other processes.
 
 Concurrency on the other hand can be easily achieved in python.
+In python 3 the tulip project / async io / PEP 3156 provide a uniform interface
+to most of what you want.  In Python 2 it is reasonable to use the Greenlet library.
 
 \section{Development Environments}
 
